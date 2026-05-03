@@ -2,6 +2,7 @@ package com.diwan.myprofileapp.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -12,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 import com.diwan.myprofileapp.screens.*
+import com.diwan.myprofileapp.shared.viewmodel.ChatViewModel
 import com.diwan.myprofileapp.shared.viewmodel.NoteViewModel
 import com.diwan.myprofileapp.shared.viewmodel.ProfileViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -21,12 +23,14 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val noteViewModel: NoteViewModel = koinViewModel()
     val profileViewModel: ProfileViewModel = koinViewModel()
+    val chatViewModel: ChatViewModel = koinViewModel()
 
     val uiState by profileViewModel.uiState.collectAsState()
 
     val bottomItems = listOf(
         Triple(Screen.NoteList.route, "Notes", Icons.Default.Home),
         Triple(Screen.Favorites.route, "Favorites", Icons.Default.Favorite),
+        Triple(Screen.Chat.route, "Chat", Icons.Default.ChatBubble),
         Triple(Screen.Profile.route, "Profile", Icons.Default.Person)
     )
 
@@ -45,7 +49,9 @@ fun AppNavigation() {
                                 selected = currentRoute == route,
                                 onClick = {
                                     navController.navigate(route) {
-                                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
                                         launchSingleTop = true
                                         restoreState = true
                                     }
@@ -64,7 +70,9 @@ fun AppNavigation() {
                 composable(Screen.NoteList.route) {
                     NoteListScreen(
                         viewModel = noteViewModel,
-                        onNoteClick = { noteId -> navController.navigate(Screen.NoteDetail.createRoute(noteId)) },
+                        onNoteClick = { noteId ->
+                            navController.navigate(Screen.NoteDetail.createRoute(noteId))
+                        },
                         onAddNote = { navController.navigate(Screen.AddNote.route) }
                     )
                 }
@@ -100,8 +108,13 @@ fun AppNavigation() {
                 composable(Screen.Favorites.route) {
                     FavoritesScreen(
                         viewModel = noteViewModel,
-                        onNoteClick = { noteId -> navController.navigate(Screen.NoteDetail.createRoute(noteId)) }
+                        onNoteClick = { noteId ->
+                            navController.navigate(Screen.NoteDetail.createRoute(noteId))
+                        }
                     )
+                }
+                composable(Screen.Chat.route) {
+                    ChatScreen(viewModel = chatViewModel)
                 }
                 composable(Screen.Profile.route) {
                     ProfileScreen(viewModel = profileViewModel)

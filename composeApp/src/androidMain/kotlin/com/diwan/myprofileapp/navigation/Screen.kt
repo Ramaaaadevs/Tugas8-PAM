@@ -4,6 +4,7 @@ sealed class Screen(val route: String) {
     object NoteList : Screen("note_list")
     object AddNote : Screen("add_note")
     object Favorites : Screen("favorites")
+    object Chat : Screen("chat")
     object Profile : Screen("profile")
     object EditProfile : Screen("edit_profile")
 
