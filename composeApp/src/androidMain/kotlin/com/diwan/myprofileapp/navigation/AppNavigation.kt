@@ -8,20 +8,19 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
 import com.diwan.myprofileapp.screens.*
 import com.diwan.myprofileapp.shared.viewmodel.NoteViewModel
 import com.diwan.myprofileapp.shared.viewmodel.ProfileViewModel
-import com.diwan.myprofileapp.shared.viewmodel.ViewModelFactory
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AppNavigation(factory: ViewModelFactory) {
+fun AppNavigation() {
     val navController = rememberNavController()
-    val noteViewModel: NoteViewModel = viewModel(factory = factory)
-    val profileViewModel: ProfileViewModel = viewModel(factory = factory)
+    val noteViewModel: NoteViewModel = koinViewModel()
+    val profileViewModel: ProfileViewModel = koinViewModel()
 
     val uiState by profileViewModel.uiState.collectAsState()
 

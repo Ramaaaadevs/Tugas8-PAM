@@ -1,5 +1,6 @@
 package com.diwan.myprofileapp.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.diwan.myprofileapp.shared.platform.NetworkMonitor
 import com.diwan.myprofileapp.shared.viewmodel.NoteViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +29,9 @@ fun NoteListScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
+    val networkMonitor: NetworkMonitor = koinInject()
+    val isConnected by networkMonitor.observeConnectivity().collectAsState(initial = true)
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("My Notes") })
@@ -37,7 +43,24 @@ fun NoteListScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-            // Search bar
+
+            AnimatedVisibility(visible = !isConnected) {
+                Surface(color = MaterialTheme.colorScheme.errorContainer) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "Tidak ada koneksi internet",
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.setSearchQuery(it) },

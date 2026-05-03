@@ -20,7 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.diwan.myprofileapp.shared.platform.BatteryInfo
+import com.diwan.myprofileapp.shared.platform.DeviceInfo
 import com.diwan.myprofileapp.shared.viewmodel.ProfileViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun ProfileHeader(nama: String, bio: String) {
@@ -108,6 +111,37 @@ fun ProfileCard(
     }
 }
 
+@Composable
+fun DeviceInfoCard(
+    cardColor: Color = Color.White,
+    textColor: Color = Color(0xFF212121)
+) {
+    val deviceInfo: DeviceInfo = koinInject()
+    val batteryInfo: BatteryInfo = koinInject()
+
+    val batteryLevel = remember { batteryInfo.getBatteryLevel() }
+    val charging = remember { batteryInfo.isCharging() }
+    val batteryText = "$batteryLevel%" + if (charging) " ⚡" else ""
+
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = cardColor)
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text("Informasi Perangkat", fontSize = 16.sp,
+                fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
+            Spacer(Modifier.height(4.dp))
+            HorizontalDivider(color = Color(0xFFE0E0E0))
+            Spacer(Modifier.height(8.dp))
+            InfoItem(Icons.Default.Info,     "Device",  deviceInfo.getDeviceName(), textColor)
+            InfoItem(Icons.Default.Settings, "OS",      deviceInfo.getOsVersion(),  textColor)
+            InfoItem(Icons.Default.Star,     "Battery", batteryText,                textColor)
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel) {
@@ -144,8 +178,9 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
             textColor = textColor
         )
         Spacer(Modifier.height(16.dp))
+        DeviceInfoCard(cardColor = cardColor, textColor = textColor)
+        Spacer(Modifier.height(16.dp))
 
-        // Dark Mode Toggle
         Card(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             shape = RoundedCornerShape(16.dp),
@@ -254,8 +289,7 @@ fun EditProfileScreen(
                 title = { Text("Edit Profil", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, "Kembali",
-                            tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, "Kembali", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

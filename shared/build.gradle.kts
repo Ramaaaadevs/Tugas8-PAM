@@ -19,10 +19,12 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
             implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.koin.core)
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.koin.android)
         }
     }
 }
