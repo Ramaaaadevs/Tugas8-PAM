@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
-val androidModule = module {
+fun androidModule(geminiApiKey: String) = module {
     single { DatabaseDriverFactory(androidContext()) }
     single {
         val prefs = androidContext()
@@ -26,7 +26,6 @@ val androidModule = module {
     single { DeviceInfo() }
     single { NetworkMonitor() }
     single { BatteryInfo() }
-
     single {
         HttpClient(Android) {
             install(ContentNegotiation) {
@@ -37,9 +36,5 @@ val androidModule = module {
             }
         }
     }
-
-    single {
-        val apiKey = com.diwan.myprofileapp.BuildConfig.GEMINI_API_KEY
-        GeminiService(get(), apiKey)
-    }
+    single { GeminiService(get(), geminiApiKey) }
 }

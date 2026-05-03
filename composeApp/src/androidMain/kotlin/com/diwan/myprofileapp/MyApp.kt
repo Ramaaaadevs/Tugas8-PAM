@@ -11,7 +11,7 @@ class MyApp : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@MyApp)
-            modules(commonModule, androidModule)
+            modules(commonModule, androidModule(BuildConfig.GEMINI_API_KEY))
         }
     }
 }

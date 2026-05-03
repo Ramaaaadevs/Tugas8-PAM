@@ -10,7 +10,7 @@ class GeminiService(
     private val apiKey: String
 ) {
     private val baseUrl = "https://generativelanguage.googleapis.com/v1beta"
-    private val model = "gemini-2.0-flash"
+    private val model = "gemini-2.5-flash"
 
     private val conversationHistory = mutableListOf<GeminiContent>()
 
