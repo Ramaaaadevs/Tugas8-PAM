@@ -12,10 +12,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.diwan.myprofileapp.shared.platform.NetworkMonitor
 import com.diwan.myprofileapp.shared.viewmodel.NoteViewModel
+import com.diwan.myprofileapp.util.TestTags
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,9 +27,9 @@ fun NoteListScreen(
     onNoteClick: (Long) -> Unit,
     onAddNote: () -> Unit
 ) {
-    val notes by viewModel.notes.collectAsState()
+    val notes       by viewModel.notes.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val isLoading   by viewModel.isLoading.collectAsState()
 
     val networkMonitor: NetworkMonitor = koinInject()
     val isConnected by networkMonitor.observeConnectivity().collectAsState(initial = true)
@@ -37,7 +39,10 @@ fun NoteListScreen(
             TopAppBar(title = { Text("My Notes") })
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddNote) {
+            FloatingActionButton(
+                onClick = onAddNote,
+                modifier = Modifier.testTag(TestTags.FAB_ADD_NOTE)
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Note")
             }
         }
@@ -66,7 +71,8 @@ fun NoteListScreen(
                 onValueChange = { viewModel.setSearchQuery(it) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .testTag(TestTags.SEARCH_FIELD),
                 placeholder = { Text("Search notes...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true
@@ -79,21 +85,34 @@ fun NoteListScreen(
                     }
                 }
                 notes.isEmpty() -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag(TestTags.NOTE_LIST_EMPTY),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
-                            text = if (searchQuery.isBlank()) "No notes yet.\nTap + to add one." else "No results for \"$searchQuery\"",
+                            text = if (searchQuery.isBlank())
+                                "No notes yet.\nTap + to add one."
+                            else
+                                "No results for \"$searchQuery\"",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
                 else -> {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag(TestTags.NOTE_LIST)
+                    ) {
                         items(notes, key = { it.id }) { note ->
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp, vertical = 6.dp)
+                                    .testTag("${TestTags.NOTE_ITEM}_${note.id}")
                                     .clickable { onNoteClick(note.id) }
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
@@ -101,7 +120,10 @@ fun NoteListScreen(
                                         text = note.title,
                                         style = MaterialTheme.typography.titleMedium,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.testTag(
+                                            "${TestTags.NOTE_ITEM_TITLE}_${note.id}"
+                                        )
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(

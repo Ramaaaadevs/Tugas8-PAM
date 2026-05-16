@@ -35,6 +35,18 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
         }
+
+        // ── Instrumented (UI) Tests ────────────────────────────────────────
+        val androidInstrumentedTest by getting {
+            dependencies {
+                implementation(libs.androidx.compose.ui.test.junit4)
+                implementation("androidx.test.ext:junit:1.2.1")
+                implementation("androidx.test.espresso:espresso-core:3.6.1")
+                implementation(libs.koin.android)
+                implementation(libs.koin.androidx.compose)
+                implementation("io.insert-koin:koin-test:3.5.3")
+            }
+        }
     }
 }
 
@@ -57,6 +69,8 @@ android {
             "String", "GEMINI_API_KEY",
             "\"${properties.getProperty("GEMINI_API_KEY", "")}\""
         )
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -80,4 +94,5 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

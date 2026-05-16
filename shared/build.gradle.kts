@@ -32,6 +32,18 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.ktor.client.android)
         }
+
+        // ── Test dependencies ──────────────────────────────────────────────
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+                implementation("app.cash.turbine:turbine:1.1.0")
+                implementation("io.mockk:mockk:1.13.12")
+                implementation("io.insert-koin:koin-test:3.5.3")
+                implementation("androidx.arch.core:core-testing:2.2.0")
+            }
+        }
     }
 }
 

@@ -3,6 +3,8 @@ package com.diwan.myprofileapp.shared.di
 import android.content.Context
 import com.diwan.myprofileapp.shared.ai.GeminiService
 import com.diwan.myprofileapp.shared.data.DatabaseDriverFactory
+import com.diwan.myprofileapp.shared.data.NoteRepository
+import com.diwan.myprofileapp.shared.data.NoteRepositoryImpl
 import com.diwan.myprofileapp.shared.data.SettingsRepository
 import com.diwan.myprofileapp.shared.platform.BatteryInfo
 import com.diwan.myprofileapp.shared.platform.DeviceInfo
@@ -14,10 +16,12 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 fun androidModule(geminiApiKey: String) = module {
     single { DatabaseDriverFactory(androidContext()) }
+    single { NoteRepositoryImpl(get()) } bind NoteRepository::class  // ← baris baru
     single {
         val prefs = androidContext()
             .getSharedPreferences("app_settings", Context.MODE_PRIVATE)
